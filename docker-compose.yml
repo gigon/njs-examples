@@ -12,13 +12,11 @@ services:
       - config
 
   config:
-    image: nginx:1.21.0-alpine
-    volumes:
-      - ./conf/http/tenant-file-serving/config.conf:/etc/nginx/nginx.conf:ro
+    build: ./config-service
 
   test:
     image: curlimages/curl:7.83.1
-    command: ["/bin/sh", "-c", "sleep 5 && sh /tests/test.sh"]
+    command: ["/bin/sh", "-c", "sleep 15 && sh /tests/test.sh"]
     volumes:
       - ./tests:/tests
     depends_on:

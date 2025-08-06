@@ -19,15 +19,13 @@ else
 fi
 
 echo "--- Testing cache invalidation ---"
+curl -s -X POST "http://config/tenantVersion?tenant=tenant1&version=v2"
 curl -s http://nginx/invalidate?tenant=tenant1
-# In a real scenario, the config service would now be updated to return a new version.
-# We can't do that here, so we'll just check the logs to see that the cache was invalidated.
-# We'll make the same request again, and we should see in the logs that the version is fetched again.
 response3=$(curl -s -H "tenant: tenant1" http://nginx/files/cer)
-if [ "$response3" = "v1" ]; then
+if [ "$response3" = "v2" ]; then
     echo "Cache invalidation test PASSED"
 else
-    echo "Cache invalidation test FAILED. Expected v1, got $response3"
+    echo "Cache invalidation test FAILED. Expected v2, got $response3"
     exit 1
 fi
 
