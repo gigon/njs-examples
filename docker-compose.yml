@@ -1,0 +1,25 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:1.21.0-alpine
+    volumes:
+      - ./conf/http/tenant-file-serving/main.conf:/etc/nginx/nginx.conf:ro
+      - ./njs:/etc/nginx/njs:ro
+    ports:
+      - "8080:80"
+    command: [nginx-debug, '-g', 'daemon off;']
+    depends_on:
+      - config
+
+  config:
+    image: nginx:1.21.0-alpine
+    volumes:
+      - ./conf/http/tenant-file-serving/config.conf:/etc/nginx/nginx.conf:ro
+
+  test:
+    image: curlimages/curl:7.83.1
+    command: ["/bin/sh", "-c", "sleep 5 && sh /tests/test.sh"]
+    volumes:
+      - ./tests:/tests
+    depends_on:
+      - nginx
